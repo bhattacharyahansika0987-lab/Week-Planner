@@ -11,7 +11,7 @@
 :root{--bg:#FFF8EC;--card:#FFF7F1;--surface:#FFFEFA;--pink:#F9D5E5;--rose:#EE9DC0;--peach:#FFE6D6;--lav:#F7DCEA;--mint:#FBDDE9;--butter:#FFF1CC;--ink:#5B3A48;--muted:#A07C8B;--border:#F2CFDD;--radius:16px;--shadow:0 6px 16px rgba(229,138,176,.22);--m:56px}
 html{overflow-x:hidden}
 body{font-family:'Plus Jakarta Sans',sans-serif;color:var(--ink);min-height:100vh;padding:24px 20px 60px;overflow-x:hidden;background:linear-gradient(135deg,#FFF1F6,#FFF8EC 40%,#FFEFF5 70%,#FFF6E6) fixed}
-body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(circle,#f6b6d2 0 1.5px,transparent 2px),radial-gradient(circle,#ffe0a3 0 1.5px,transparent 2px),radial-gradient(circle,#fff 0 2px,transparent 2.5px);background-size:97px 97px,131px 131px,71px 71px;background-position:12px 30px,60px 90px,30px 50px;animation:tw 3s ease-in-out infinite alternate}
+body::before{content:"";position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:0;background-image:radial-gradient(circle,#f6b6d2 0 1.5px,transparent 2px),radial-gradient(circle,#ffe0a3 0 1.5px,transparent 2px),radial-gradient(circle,#fff 0 2px,transparent 2.5px);background-size:97px 97px,131px 131px,71px 71px;background-position:12px 30px,60px 90px,30px 50px;animation:tw 3s ease-in-out infinite alternate}
 @keyframes tw{from{opacity:.3}to{opacity:1}}
 h1,h2,h3,h4{font-family:'Lora',serif}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
@@ -43,12 +43,12 @@ input,textarea,select{font-family:inherit;font-size:14px;color:var(--ink)}
 .tab.active{background:#FFFBF0;transform:none;padding-top:10px;color:var(--ink)}
 .notebook{max-width:1200px;margin:0 auto}
 .spiral{position:absolute;left:-14px;top:16px;bottom:16px;width:48px;z-index:5;pointer-events:none;background-image:linear-gradient(180deg,transparent 9px,#c88aa5 9px,#fff 12px,#e7b3c9 15px,#b97593 17px,transparent 17px);background-size:48px 30px;filter:drop-shadow(1px 2px 1px rgba(150,80,110,.3))}
-.page{--m:56px;position:relative;overflow:hidden;transform-origin:left center;border-radius:6px 20px 20px 6px;padding:26px 22px 28px calc(var(--m) + 18px);border:1.5px solid #f3cfdd;background-color:#FFFBF0;
+.page{--m:56px;position:relative;transform-origin:left center;border-radius:6px 20px 20px 6px;padding:26px 22px 28px calc(var(--m) + 18px);border:1.5px solid #f3cfdd;background-color:#FFFBF0;
   box-shadow:3px 3px 0 #fff3f7,6px 6px 0 #f6d5e2,9px 9px 0 #fff3f7,12px 12px 0 #f3c9da,0 20px 40px rgba(229,138,176,.25);
   background-image:linear-gradient(90deg,transparent calc(var(--m) - 1px),rgba(229,138,176,.55) calc(var(--m) - 1px),rgba(229,138,176,.55) calc(var(--m) + 1px),transparent calc(var(--m) + 1px)),repeating-linear-gradient(180deg,transparent 0 31px,rgba(244,169,200,.3) 31px 32px)}
 .page[data-paper=dotted]{background-image:linear-gradient(90deg,transparent calc(var(--m) - 1px),rgba(229,138,176,.55) calc(var(--m) - 1px),rgba(229,138,176,.55) calc(var(--m) + 1px),transparent calc(var(--m) + 1px)),radial-gradient(rgba(229,138,176,.5) 1.3px,transparent 1.7px);background-size:auto,24px 24px}
 .page[data-paper=grid]{background-image:linear-gradient(90deg,transparent calc(var(--m) - 1px),rgba(229,138,176,.55) calc(var(--m) - 1px),rgba(229,138,176,.55) calc(var(--m) + 1px),transparent calc(var(--m) + 1px)),linear-gradient(rgba(244,169,200,.28) 1px,transparent 1px),linear-gradient(90deg,rgba(244,169,200,.28) 1px,transparent 1px);background-size:auto,26px 26px,26px 26px}
-.page::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.55) 50%,transparent 60%);background-size:260% 100%;animation:gloss 9s ease-in-out infinite}
+.page::after{content:"";position:absolute;top:0;left:0;right:0;bottom:0;border-radius:inherit;pointer-events:none;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.55) 50%,transparent 60%);background-size:260% 100%;animation:gloss 9s ease-in-out infinite}
 @keyframes gloss{0%{background-position:130% 0}60%,100%{background-position:-60% 0}}
 .out-next{animation:outN .38s ease-in forwards}
 @keyframes outN{to{transform:perspective(1500px) rotateY(-100deg);opacity:.15}}
@@ -84,7 +84,7 @@ input,textarea,select{font-family:inherit;font-size:14px;color:var(--ink)}
 .ring circle{fill:none;stroke-width:8;stroke-linecap:round}
 .ring .bg{stroke:rgba(255,255,255,.7)}
 .ring .fg{stroke:#d9608f;stroke-dasharray:213.6;stroke-dashoffset:213.6;transition:stroke-dashoffset .7s cubic-bezier(.4,1.4,.6,1)}
-.ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:18px;font-family:'Lora',serif}
+.ring b{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:18px;font-family:'Lora',serif}
 .sticky{background:linear-gradient(145deg,#FFF3C9,#FFE6EF)}
 #affirm{font-family:'Caveat',cursive;font-size:25px;line-height:1.2;text-align:center;padding:6px 4px 12px}
 
@@ -161,7 +161,7 @@ select{padding:8px;border:1px solid var(--border);border-radius:10px;background:
 .drop-hover{background:var(--butter)!important}
 .tag{display:inline-block;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;color:var(--ink)}
 .tag-work{background:#f9c9dd}.tag-personal{background:#ffe9c9}.tag-wellness{background:#fde2ee}.tag-study{background:#fff3cc}.tag-other{background:#f3d4e4}
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(120,60,90,.35);backdrop-filter:blur(4px);z-index:100;align-items:center;justify-content:center;padding:16px}
+.modal-bg{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(120,60,90,.35);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);z-index:100;align-items:center;justify-content:center;padding:16px}
 .modal-bg.show{display:flex}
 .modal{background:linear-gradient(145deg,#FFFDF8,#FFEFF5);border:1.5px solid #f2bcd3;border-radius:20px;padding:22px;width:100%;max-width:380px;box-shadow:0 14px 50px rgba(150,60,100,.3);animation:pop .25s}
 .modal h3{margin-bottom:14px;font-size:26px;font-family:'Caveat',cursive}
@@ -172,8 +172,33 @@ select{padding:8px;border:1px solid var(--border);border-radius:10px;background:
 .btn-row .cancel{background:var(--surface);border:1px solid var(--border);color:var(--muted)}
 #toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,80px);background:#7a4560;color:#fff7fa;padding:10px 20px;border-radius:999px;font-size:13px;font-weight:600;opacity:0;transition:.35s;z-index:200;max-width:90vw;text-align:center}
 #toast.show{transform:translate(-50%,0);opacity:1}
-#confetti{position:fixed;inset:0;pointer-events:none;z-index:150}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+#confetti{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:150}
+.study-layout{display:none;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+@media(max-width:1100px){.study-layout{grid-template-columns:1fr}}
+.study-layout .card h3{cursor:default}
+.study-layout .card h3::after{display:none}
+.hint{font-size:12px;color:var(--muted);line-height:1.5;margin:8px 0}
+.subj{border:1px solid var(--border);border-left:6px solid var(--c);border-radius:12px;padding:10px;margin-top:12px;background:var(--surface)}
+.subj h4{display:flex;gap:8px;align-items:center;font-size:15px}
+.subj h4 span{flex:1}
+.subj h4 small{color:var(--muted);font-size:11px;font-family:'Plus Jakarta Sans',sans-serif}
+.cd{padding:2px 10px;border-radius:999px;font-size:11px;background:var(--pink)}
+.cd.hot{background:#f7a4c0}
+.cdrow{margin-bottom:12px}
+.cdrow .top{display:flex;gap:8px;align-items:center;font-size:13px;font-weight:700}
+.cdrow .top span{flex:1}
+.set{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.set label{font-size:12px;font-weight:700;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.set input,.add-row input[type=date]{padding:9px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}
+.logbars{display:flex;align-items:flex-end;gap:6px;height:90px;margin:12px 0 4px}
+.logbars div{flex:1;height:100%;text-align:center;font-size:10px;color:var(--muted);display:flex;flex-direction:column;justify-content:flex-end}
+.logbars i{display:block;background:linear-gradient(180deg,#f4c97a,#ee9dc0);border-radius:6px 6px 2px 2px;min-height:3px}
+.seg{display:flex;flex-wrap:wrap;gap:6px;width:100%}
+.seg button{padding:8px 13px;border-radius:999px;font-size:12px;font-weight:700;background:var(--surface);border:1px solid var(--border);color:var(--muted)}
+.seg button.on{background:var(--pink);color:var(--ink);border-color:#f2a0c0}
+.modal .seg{margin-bottom:12px}
+.add-row .seg{flex-basis:100%}
+@media(pointer:coarse){input,textarea{font-size:16px!important}button{touch-action:manipulation}}
 </style>
 </head>
 <body>
@@ -185,6 +210,7 @@ select{padding:8px;border:1px solid var(--border);border-radius:10px;background:
   <div class="view-toggle">
     <button id="btnDaily" class="active">Daily</button>
     <button id="btnWeekly">Weekly</button>
+    <button id="btnStudy">Study</button>
   </div>
   <div class="date-nav">
     <button id="prevBtn">← Prev</button>
@@ -214,46 +240,4 @@ select{padding:8px;border:1px solid var(--border);border-radius:10px;background:
   <div class="col">
     <div class="card progress">
       <div class="ring">
-        <svg width="84" height="84" viewBox="0 0 84 84"><circle class="bg" cx="42" cy="42" r="34"/><circle class="fg" id="ringFg" cx="42" cy="42" r="34"/></svg>
-        <b id="pct">0%</b>
-      </div>
-      <div><h3>Today's progress</h3><p id="progMsg"></p><p id="progHabits"></p></div>
-    </div>
-    <div class="card">
-      <h3>💌 Mood check-in</h3>
-      <div class="moods" id="moods"></div>
-      <textarea id="moodNote" placeholder="one-line mood reflection..."></textarea>
-    </div>
-    <div class="card">
-      <h3>⭐ Top 3 priorities</h3>
-      <div id="prioList"></div>
-      <div class="add-row"><input id="prioInput" placeholder="add a priority..."><button class="go" id="prioAdd">+</button></div>
-    </div>
-    <div class="card">
-      <h3>📝 To-do list</h3>
-      <div class="filters">
-        <button class="chip active" data-f="all">All</button>
-        <button class="chip" data-f="active">Active</button>
-        <button class="chip" data-f="done">Done</button>
-        <input id="todoSearch" placeholder="search...">
-      </div>
-      <div id="todoList"></div>
-      <div class="add-row">
-        <input id="todoInput" placeholder="add a task...">
-        <select id="todoCat"><option value="work">Work</option><option value="personal">Personal</option><option value="wellness">Wellness</option><option value="study">Study</option><option value="other">Other</option></select>
-        <select id="todoPri"><option value="high">🔴 High</option><option value="med" selected>🟡 Medium</option><option value="low">🟢 Low</option></select>
-        <button class="go" id="todoAdd">+</button>
-      </div>
-    </div>
-    <div class="card">
-      <h3>💧 Water & habits <small id="waterCount"></small></h3>
-      <div class="glasses" id="glasses"></div>
-      <div class="habits" id="habits"></div>
-    </div>
-    <div class="card timer">
-      <h3 style="justify-content:center">🍅 Focus timer</h3>
-      <div class="filters" style="justify-content:center">
-        <button class="chip active" data-m="25">Focus 25</button>
-        <button class="chip" data-m="5">Break 5</button>
-        <button class="chip" data-m="15">Long 15</button>
-      <
+        <svg width="84" height="84" viewBox="0 0 84 84"><circle class="bg" cx="42" cy="42" r="34"/><cir

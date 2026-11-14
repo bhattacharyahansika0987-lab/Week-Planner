@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planify — Daily & Weekly Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Lora:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* ============ RESET & BASE ============ */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#FDFBF7; --card:#FAF5EE; --pink:#F8C8DC; --rose:#F4A9C8;
+  --peach:#FFD8BE; --lav:#E2D4F0; --mint:#D4EFE6; --butter:#FFF3C4;
+  --ink:#3D3535; --muted:#8A7F7F; --border:#EAE0D5;
+  --radius:14px; --shadow:0 4px 14px rgba(61,53,53,.06);
+}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:24px 16px}
+h1,h2,h3{font-family:'Lora',serif}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+input,textarea,select{font-family:inherit;font-size:14px;color:var(--ink)}
+::placeholder{color:var(--muted)}
+
+/* ============ HEADER ============ */
+.header{max-width:1200px;margin:0 auto 20px;text-align:center}
+.header h1{font-size:30px;color:var(--ink)}
+.header p{color:var(--muted);font-size:14px;margin-top:4px}
+.view-toggle{display:inline-flex;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:4px;margin-top:14px;box-shadow:var(--shadow)}
+.view-toggle button{padding:8px 22px;border-radius:999px;font-size:14px;font-weight:600;color:var(--muted);transition:.2s}
+.view-toggle button.active{background:var(--pink);color:var(--ink)}
+.date-nav{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap}
+.date-nav button{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:8px 14px;font-size:13px;font-weight:600;color:var(--ink);box-shadow:var(--shadow);transition:.2s}
+.date-nav button:hover{background:var(--peach)}
+#dateLabel{font-weight:700;font-size:16px;min-width:220px;text-align:center}
+.utility{display:flex;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.utility button{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:7px 14px;font-size:12px;font-weight:600;color:var(--muted);transition:.2s}
+.utility button:hover{color:var(--ink);background:var(--butter)}
+
+/* ============ LAYOUT ============ */
+.daily-layout{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 380px;gap:20px}
+.weekly-layout{max-width:1200px;margin:0 auto;display:none;grid-template-columns:repeat(7,1fr);gap:12px}
+@media(max-width:1000px){.daily-layout{grid-template-columns:1fr}.weekly-layout{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.weekly-layout{grid-template-columns:1fr}}
+
+/* ============ CARDS ============ */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.card h3{font-size:16px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card h3 .emoji{font-size:18px}
+
+/* ============ TIMELINE ============ */
+.timeline{display:flex;flex-direction:column;gap:6px}
+.slot{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:10px 12px;cursor:pointer;transition:.2s;min-height:44px}
+.slot:hover{background:var(--butter);border-color:var(--peach)}
+.slot .time{font-size:12px;font-weight:700;color:var(--muted);min-width:70px}
+.slot .event{flex:1;font-size:13px}
+.slot .event .tag{display:inline-block;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;margin-left:6px}
+.slot .del{color:var(--muted);font-size:14px;opacity:0;transition:.2s}
+.slot:hover .del{opacity:1}
+.slot .del:hover{color:#c0392b}
+
+/* ============ MOOD ============ */
+.moods{display:flex;gap:8px;flex-wrap:wrap}
+.mood-btn{flex:1;min-width:80px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:10px 6px;text-align:center;font-size:11px;font-weight:600;color:var(--muted);transition:.2s}
+.mood-btn .mi{font-size:20px;display:block;margin-bottom:4px}
+.mood-btn:hover{transform:translateY(-2px)}
+.mood-btn.active{border-color:var(--rose);box-shadow:0 0 0 3px rgba(244,169,200,.35);color:var(--ink)}
+.mood-btn[data-mood="happy"].active{background:var(--butter)}
+.mood-btn[data-mood="calm"].active{background:var(--mint)}
+.mood-btn[data-mood="neutral"].active{background:var(--peach)}
+.mood-btn[data-mood="tired"].active{background:var(--lav)}
+.mood-btn[data-mood="stressed"].active{background:var(--pink)}
+#moodNote{width:100%;margin-top:10px;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;resize:vertical;min-height:50px}
+
+/* ============ PRIORITIES / TODO ============ */
+.prio-item,.todo-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px dashed var(--border)}
+.prio-item:last-child,.todo-item:last-child{border-bottom:none}
+.prio-item input[type=checkbox],.todo-item input[type=checkbox]{width:16px;height:16px;accent-color:var(--rose);cursor:pointer}
+.prio-item span,.todo-item span{flex:1;font-size:13px;transition:.3s}
+.prio-item input[type=checkbox]:checked+span,.todo-item input[type=checkbox]:checked+span{text-decoration:line-through;color:var(--muted)}
+.prio-item .edit,.todo-item .edit,.todo-item .del{font-size:12px;color:var(--muted);opacity:.6}
+.prio-item .edit:hover,.todo-item .edit:hover,.todo-item .del:hover{opacity:1;color:var(--ink)}
+.add-row{display:flex;gap:6px;margin-top:10px}
+.add-row input{flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#fff}
+.add-row button{background:var(--pink);border-radius:10px;padding:8px 12px;font-weight:700;font-size:13px;transition:.2s}
+.add-row button:hover{background:var(--rose)}
+.cat-select{padding:8px;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:12px}
+.time-input{padding:8px;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:12px;width:90px}
+
+/* ============ HABITS ============ */
+.habits{display:flex;gap:10px;flex-wrap:wrap}
+.habit{flex:1;min-width:70px;text-align:center;background:#fff;border:1px solid var(--border);border-radius:12px;padding:10px 4px;cursor:pointer;transition:.2s;font-size:11px;font-weight:600;color:var(--muted)}
+.habit .hi{font-size:20px;display:block;margin-bottom:4px}
+.habit.done{background:var(--mint);border-color:#9fd8c6;color:var(--ink)}
+.habit:hover{transform:translateY(-2px)}
+
+/* ============ NOTES ============ */
+#dailyNotes{width:100%;min-height:100px;padding:10px;border:1px solid var(--border);border-radius:10px;background:#fff;resize:vertical;font-size:13px;line-height:1.5}
+
+/* ============ WEEKLY ============ */
+.day-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);display:flex;flex-direction:column;min-height:280px;transition:.2s}
+.day-card.today{border-color:var(--rose);box-shadow:0 0 0 3px rgba(244,169,200,.3)}
+.day-card h4{font-family:'Lora',serif;font-size:15px;display:flex;justify-content:space-between;align-items:center}
+.mood-badge{font-size:16px}
+.day-card .tasks{flex:1;margin:10px 0;display:flex;flex-direction:column;gap:6px;overflow-y:auto;max-height:220px}
+.mini-task{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border);border-radius:10px;padding:6px 8px;font-size:12px;cursor:grab;transition:.2s}
+.mini-task:active{cursor:grabbing}
+.mini-task.dragging{opacity:.4}
+.mini-task input[type=checkbox]{width:14px;height:14px;accent-color:var(--rose)}
+.mini-task span{flex:1}
+.mini-task span.done{text-decoration:line-through;color:var(--muted)}
+.mini-task .tag{font-size:9px;padding:1px 6px;border-radius:6px;font-weight:700}
+.day-card .add-row input{font-size:12px;padding:6px 8px}
+.day-card .add-row button{padding:6px 10px;font-size:12px}
+.drop-hover{background:var(--butter)!important;border-color:var(--peach)!important}
+
+/* ============ TAG COLORS ============ */
+.tag-work{background:var(--lav)} .tag-personal{background:var(--peach)}
+.tag-wellness{background:var(--mint)} .tag-study{background:var(--butter)}
+.tag-other{background:var(--pink)}
+
+/* ============ MODAL ============ */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(61,53,53,.35);z-index:100;align-items:center;justify-content:center;padding:16px}
+.modal-bg.show{display:flex}
+.modal{background:var(--card);border-radius:var(--radius);padding:22px;width:100%;max-width:360px;box-shadow:0 10px 40px rgba(0,0,0,.15)}
+.modal h3{margin-bottom:14px;font-size:18px}
+.modal input,.modal select{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;margin-bottom:10px}
+.modal .btn-row{display:flex;gap:8px;justify-content:flex-end;margin-top:6px}
+.modal .btn-row button{padding:8px 16px;border-radius:10px;font-weight:700;font-size:13px}
+.modal .save{background:var(--pink)} .modal .save:hover{background:var(--rose)}
+.modal .cancel{background:#fff;border:1px solid var(--border);color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Planify ☁️</h1>
+  <p>your soft little life planner</p>
+  <div class="view-toggle">
+    <button id="btnDaily" class="active">Daily</button>
+    <button id="btnWeekly">Weekly</button>
+  </div>
+  <div class="date-nav">
+    <button id="prevBtn">← Prev</button>
+    <button id="todayBtn">Today</button>
+    <button id="nextBtn">Next →</button>
+    <span id="dateLabel"></span>
+  </div>
+  <div class="utility">
+    <button id="clearDone">Clear Completed</button>
+    <button id="resetBtn">Reset Day/Week</button>
+  </div>
+</div>
+
+<!-- ============ DAILY VIEW ============ -->
+<div class="daily-layout" id="dailyView">
+  <div class="card">
+    <h3><span class="emoji">🕰️</span> Hourly Schedule <span style="font-size:11px;color:var(--muted);font-weight:400">(6 AM – 10 PM, click a slot)</span></h3>
+    <div class="timeline" id="timeline"></div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <div class="card">
+      <h3><span class="emoji">💌</span> Daily Mood Check-In</h3>
+      <div class="moods" id="moods"></div>
+      <textarea id="moodNote" placeholder="one-line mood reflection..."></textarea>
+    </div>
+    <div class="card">
+      <h3><span class="emoji">⭐</span> Top 3 Priorities</h3>
+      <div id="prioList"></div>
+      <div class="add-row"><input id="prioInput" placeholder="add a priority..."><button onclick="addPrio()">+</button></div>
+    </div>
+    <div class="card">
+      <h3><span class="emoji">📝</span> To-Do List</h3>
+      <div id="todoList"></div>
+      <div class="add-row">
+        <input id="todoInput" placeholder="add a task...">
+        <select id="todoCat" class="cat-select">
+          <option value="work">Work</option><option value="personal">Personal</option>
+          <option value="wellness">Wellness</option><option value="study">Study</option><option value="other">Other</option>
+        </select>
+        <button onclick="addTodo()">+</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3><span class="emoji">💧</span> Water & Habits</h3>
+      <div class="habits" id="habits"></div>
+    </div>
+    <div class="card">
+      <h3><span class="emoji">🌷</span> Daily Notes / Gratitude</h3>
+      <textarea id="dailyNotes" placeholder="what are you grateful for today?"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ============ WEEKLY VIEW ============ -->
+<div class="weekly-layout" id="weeklyView"></div>
+
+<!-- ============ MODAL ============ -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3 id="modalTitle">Schedule Event</h3>
+    <input id="modalEvent" placeholder="What's happening?">
+    <select id="modalCat" class="cat-select" style="width:100%">
+      <option value="work">Work</option><option value="personal">Personal</option>
+      <option value="wellness">Wellness</option><option value="study">Study</option><option value="other">Other</option>
+    </select>
+    <div class="btn-row">
+      <button class="cancel" onclick="closeModal()">Cancel</button>
+      <button class="save" onclick="saveEvent()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ STATE & STORAGE ============ */
+const KEY='planify_v1';
+let state=JSON.parse(localStorage.getItem(KEY)||'{}');
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function dayKey(d){return d.toISOString().slice(0,10)}
+let current=new Date();current.setHours(0,0,0,0);
+function getData(k){if(!state[k])state[k]={events:{},mood:null,moodNote:'',prios:['','',''],todos:[],habits:{},notes:''};return state[k]}
+
+/* ============ MOODS & HABITS ============ */
+const MOODS=[['happy','😊','Radiant'],['calm','🌿','Content'],['neutral','☁️','Neutral'],['tired','🌙','Low Energy'],['stressed','🌊','Anxious']];
+const HABITS=[['water','💧','Water'],['move','🏃','Move'],['read','📖','Read'],['sleep','😴','Sleep'],['selfcare','🛁','Self-care']];
+
+/* ============ VIEW SWITCH ============ */
+document.getElementById('btnDaily').onclick=()=>switchView('daily');
+document.getElementById('btnWeekly').onclick=()=>switchView('weekly');
+function switchView(v){
+  document.getElementById('btnDaily').classList.toggle('active',v==='daily');
+  document.getElementById('btnWeekly').classList.toggle('active',v==='weekly');
+  document.getElementById('dailyView').style.display=v==='daily'?'grid':'none';
+  document.getElementById('weeklyView').style.display=v==='weekly'?'grid':'none';
+  render();
+}
+
+/* ============ DATE NAV ============ */
+document.getElementById('prevBtn').onclick=()=>{current.setDate(current.getDate()+(document.getElementById('btnWeekly').classList.contains('active')?-7:-1));render()};
+document.getElementById('nextBtn').onclick=()=>{current.setDate(current.getDate()+(document.getElementById('btnWeekly').classList.contains('active')?7:1));render()};
+document.getElementById('todayBtn').onclick=()=>{current=new Date();current.setHours(0,0,0,0);render()};
+
+/* ============ RENDER ============ */
+function render(){
+  const isWeekly=document.getElementById('btnWeekly').classList.contains('active');
+  if(isWeekly)renderWeekly();else{renderDaily();renderTimeline()}
+  save();
+}
+
+function renderDaily(){
+  const d=getData(dayKey(current));
+  const opts={weekday:'long',month:'long',day:'numeric',year:'numeric'};
+  document.getElementById('dateLabel').textContent=current.toLocaleDateString('en-US',opts);
+  // moods
+  const moodsEl=document.getElementById('moods');moodsEl.innerHTML='';
+  MOODS.forEach(([id,emoji,label])=>{
+    const b=document.createElement('button');b.className='mood-btn'+(d.mood===id?' active':'');b.dataset.mood=id;
+    b.innerHTML=`<span class="mi">${emoji}</span>${label}`;
+    b.onclick=()=>{d.mood=id;render()};moodsEl.appendChild(b);
+  });
+  document.getElementById('moodNote').value=d.moodNote;
+  document.getElementById('moodNote').oninput=e=>{d.moodNote=e.target.value;save()};
+  // priorities
+  const pl=document.getElementById('prioList');pl.innerHTML='';
+  d.prios.forEach((p,i)=>{
+    const row=document.createElement('div');row.className='prio-item';
+    row.innerHTML=`<input type="checkbox" ${p.done?'checked':''}><span>${p.text||''}</span><button class="edit">✏️</button>`;
+    row.querySelector('input').onchange=e=>{p.done=e.target.checked;render()};
+    row.querySelector('span').ondblclick=()=>{const t=prompt('Edit priority',p.text);if(t!==null){p.text=t;render()}};
+    row.querySelector('.edit').onclick=()=>{const t=prompt('Edit priority',p.text);if(t!==null){p.text=t;render()}};
+    pl.appendChild(row);
+  });
+  document.getElementById('prioInput').value='';
+  // todos
+  const tl=document.getElementById('todoList');tl.innerHTML='';
+  d.todos.forEach((t,i)=>{
+    const row=document.createElement('div');row.className='todo-item';
+    row.innerHTML=`<input type="checkbox" ${t.done?'checked':''}><span>${t.text}</span><span class="tag tag-${t.cat}">${t.cat}</span><button class="edit">✏️</button><button class="del">🗑️</button>`;
+    row.querySelector('input').onchange=e=>{t.done=e.target.checked;render()};
+    row.querySelector('.edit').onclick=()=>{const nt=prompt('Edit task',t.text);if(nt!==null){t.text=nt;render()}};
+    row.querySelector('.del').onclick=()=>{d.todos.splice(i,1);render()};
+    tl.appendChild(row);
+  });
+  document.getElementById('todoInput').value='';
+  // habits
+  const hb=document.getElementById('habits');hb.innerHTML='';
+  HABITS.forEach(([id,emoji,label])=>{
+    const b=document.createElement('button');b.className='habit'+(d.habits[id]?' done':'');
+    b.innerHTML=`<span class="hi">${emoji}</span>${label}`;
+    b.onclick=()=>{d.habits[id]=!d.habits[id];render()};hb.appendChild(b);
+  });
+  document.getElementById('dailyNotes').value=d.notes;
+  document.getElementById('dailyNotes').oninput=e=>{d.notes=e.target.value;save()};
+}
+
+function renderTimeline(){
+  const d=getData(dayKey(current));
+  const tl=document.getElementById('timeline');tl.innerHTML='';
+  for(let h=6;h<=22;h++){
+    const label=((h%12)||12)+(h<12?' AM':' PM');
+    const ev=d.events[h];
+    const slot=document.createElement('div');slot.className='slot';
+    slot.innerHTML=`<span class="time">${label}</span><span class="event">${ev?ev.text+' <span class="tag tag-'+ev.cat+'">'+ev.cat+'</span>':'<span style="color:var(--muted)">+ add</span>'}</span>${ev?'<button class="del">🗑️</button>':''}`;
+    slot.onclick=()=>openModal(h);
+    if(ev)slot.querySelector('.del').onclick=e=>{e.stopPropagation();delete d.events[h];render()};
+    tl.appendChild(slot);
+  }
+}
+
+/* ============ MODAL ============ */
+let modalHour=null;
+function openModal(h){modalHour=h;document.getElementById('modalTitle').textContent='Schedule — '+((h%12)||12)+(h<12?' AM':' PM');document.getElementById('modalEvent').value='';document.getElementById('modalBg').classList.add('show');document.getElementById('modalEvent').focus()}
+function closeModal(){document.getElementById('modalBg').classList.remove('show')}
+function saveEvent(){
+  const txt=document.getElementById('modalEvent').value.trim();
+  if(!txt)return;
+  const d=getData(dayKey(current));
+  d.events[modalHour]={text:txt,cat:document.getElementById('modalCat').value};
+  closeModal();render();
+}
+document.getElementById('modalBg').onclick=e=>{if(e.target.id==='modalBg')closeModal()};
+
+/* ============ ADD FUNCTIONS ============ */
+function addPrio(){const v=document.getElementById('prioInput').value.trim();if(!v)return;const d=getData(dayKey(current));const empty=d.prios.findIndex(p=>!p.text);if(empty>=0)d.prios[empty]={text:v,done:false};else d.prios.push({text:v,done:false});render()}
+function addTodo(){const v=document.getElementById('todoInput').value.trim();if(!v)return;const d=getData(dayKey(current));d.todos.push({text:v,cat:document.getElementById('todoCat').value,done:false});render()}
+
+/* ============ WEEKLY ============ */
+function renderWeekly(){
+  const wl=document.getElementById('weeklyView');wl.innerHTML='';
+  const start=new Date(current);start.setDate(start.getDate()-((start.getDay()+6)%7));// Monday
+  const today=new Date();today.setHours(0,0,0,0);
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  for(let i=0;i<7;i++){
+    const date=new Date(start);date.setDate(start.getDate()+i);
+    const k=dayKey(date);const d=getData(k);
+    const card=document.createElement('div');card.className='day-card'+(date.getTime()===today.getTime()?' today':'');
+    const moodEmoji=d.mood?MOODS.find(m=>m[0]===d.mood)[1]:'';
+    card.innerHTML=`<h4>${days[i]} ${date.getDate()}<span class="mood-badge">${moodEmoji}</span></h4><div class="tasks"></div>
+      <div class="add-row"><input placeholder="quick add..."><button>+</button></div>`;
+    const tasksEl=card.querySelector('.tasks');
+    // events
+    Object.entries(d.events).forEach(([h,ev])=>{
+      const t=document.createElement('div');t.className='mini-task';t.draggable=true;t.dataset.day=k;t.dataset.type='event';t.dataset.hour=h;
+      t.innerHTML=`<span>🕰️ ${
